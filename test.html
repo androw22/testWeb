@@ -1,0 +1,1898 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام المحاسبة المبسط</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;600;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- PDF Generation Libraries: jsPDF and html2canvas -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
+    <style>
+        /*
+        * Clean Code, Mobile-First Responsive Design
+        * Built upon the specified color palette and typography.
+        * Aims for an intuitive and professional user interface.
+        */
+
+        /* ====== Variables (Colors, Sizes, Shadows) - For consistent referencing ====== */
+        :root {
+            --primary-blue: #3D78B2; 
+            --darker-blue: #2F6196;
+            --light-blue-selected: #D5E8F8; 
+            --success-green: #3DA05D;
+            --darker-green: #2F8349;
+            --warning-yellow: #FFD036; 
+            --darker-yellow: #E0BA2C;
+            --danger-red: #DE4D6D;
+            --darker-red: #C53A5A;
+            --body-bg: #F8F9FA;
+            --container-bg: #FFFFFF;
+            --form-bg: #FDFDFF;
+            --primary-text-color: #33373F;
+            --secondary-text-color: #6C757D;
+            --border-light: #DBE4ED;
+            --box-shadow-soft: rgba(61, 120, 178, 0.1);
+            --transition-speed: 0.3s; 
+        }
+
+        /* ====== Base HTML & Body Styles (Mobile-First) ====== */
+        html {
+            font-size: 100%; /* Base font size: 1rem = 16px (browser default) */
+            scroll-behavior: smooth; /* Smooth scrolling for section jumps */
+        }
+
+        body {
+            font-family: 'Noto Sans Arabic', sans-serif;
+            margin: 0;
+            padding: 1rem; /* Adaptive padding, smaller for small screens */
+            background-color: var(--body-bg);
+            color: var(--primary-text-color);
+            line-height: 1.7; 
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Align to top to avoid unnecessary spaces */
+            min-height: 100vh; /* Ensure body takes at least full viewport height */
+            direction: rtl;
+            text-align: right;
+            font-size: 1rem; /* Consistent rem unit based on html's font-size */
+        }
+
+        /* ====== Heading Styles (Responsive) ====== */
+        h1, h2, h3 {
+            color: var(--primary-text-color);
+            font-weight: 700;
+            text-align: right;
+            margin-top: 0; /* Explicitly reset for controlled spacing */
+            margin-bottom: 0;
+            font-family: 'Noto Sans Arabic', sans-serif; 
+        }
+
+        h1 {
+            font-size: 2.2rem; /* Size suitable for mobile */
+            margin-bottom: 1.8rem;
+            text-align: center;
+            color: var(--primary-blue);
+            letter-spacing: 0.5px;
+            padding-bottom: 0.5rem; 
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        h2 {
+            font-size: 1.6rem; 
+            margin-top: 1.8rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.6rem; 
+            border-bottom: 1px solid var(--border-light);
+            font-weight: 600;
+        }
+
+        h3 {
+            font-size: 1.2rem; 
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        /* ====== Main Container Styles ====== */
+        .container {
+            width: 100%; /* Full width for mobile */
+            max-width: 1200px; /* Max width for larger screens */
+            margin: 1rem auto; /* Adaptive margins, smaller for mobile */
+            background-color: var(--container-bg);
+            padding: 1.5rem; /* Smaller padding for small screens */
+            box-shadow: 0 4px 16px var(--box-shadow-soft); /* Softer shadow for mobile */
+            border-radius: 10px; 
+            box-sizing: border-box; /* Ensure padding and border are included in total width */
+            border: 1px solid var(--border-light); /* Clear borders */
+        }
+
+        /* ====== Top and Bottom Bars ====== */
+        .header-bar, .footer-bar {
+            width: 100%;
+            height: 4px; /* Thinner for mobile */
+            background-color: var(--primary-blue);
+            border-radius: 4px;
+        }
+
+        .header-bar {
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-bar {
+            margin-top: 1.5rem;
+        }
+
+        /* ====== Form Styles ====== */
+        form {
+            background-color: var(--form-bg);
+            padding: 1.8rem; 
+            border-radius: 12px; 
+            border: 1px solid var(--border-light);
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem; 
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--secondary-text-color);
+            font-size: 0.9rem; 
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="tel"],
+        .form-group input[type="number"],
+        .form-group input[type="datetime-local"],
+        #search-input {
+            width: 100%; /* Full width for input fields */
+            padding: 0.8rem;
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 0.95rem; 
+            color: var(--primary-text-color);
+            transition: border-color var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
+            text-align: right;
+            direction: rtl;
+        }
+
+        .form-group input[type="text"]:focus,
+        .form-group input[type="tel"]:focus,
+        .form-group input[type="number"]:focus,
+        .form-group input[type="datetime-local"]:focus,
+        #search-input:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(61, 120, 178, 0.2); 
+        }
+
+        .initial-amount-group small {
+            margin-top: 0.3rem;
+            font-size: 0.75rem; 
+            color: var(--secondary-text-color);
+            display: block; 
+        }
+
+        /* ====== General Button Styles (Responsive) ====== */
+        button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%; /* Full width for mobile */
+            padding: 0.9rem 1.2rem; 
+            color: white;
+            border: none;
+            border-radius: 8px; 
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 600;
+            transition: background-color var(--transition-speed) ease, transform 0.15s ease, box-shadow var(--transition-speed) ease;
+            text-align: center;
+            letter-spacing: 0.3px; 
+            gap: 0.4rem; /* Spacing between icon and text (if icons are added) */
+            margin-top: 1rem; 
+        }
+
+        button:hover {
+            transform: translateY(-2px); /* Slight lift effect */
+            box-shadow: 0 4px 10px var(--box-shadow-soft); 
+        }
+
+        /* Form button colors based on "add" or "edit" mode */
+        form[data-mode="add"] #form-submit-button {
+            background-color: var(--success-green);
+        }
+        form[data-mode="add"] #form-submit-button:hover {
+            background-color: var(--darker-green);
+        }
+
+        form[data-mode="edit"] #form-submit-button {
+            background-color: var(--primary-blue);
+        }
+        form[data-mode="edit"] #form-submit-button:hover {
+            background-color: var(--darker-blue);
+        }
+
+        .cancel-button {
+            background-color: var(--secondary-text-color) !important;
+            margin-top: 0.8rem;
+        } 
+        .cancel-button:hover {
+            background-color: #5a6268 !important;
+        }
+
+        /* ====== Search & Export Area (Responsive) ====== */
+        #search-export-area {
+            margin-bottom: 1.8rem;
+            padding-bottom: 1.2rem;
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            flex-direction: column; /* Column layout by default for mobile */
+            gap: 1rem;
+        }
+
+        #search-input-group {
+            flex-grow: 1; /* Allows it to take available space in row layout */
+            margin-bottom: 0; 
+        }
+        #search-input-group label {
+            margin-bottom: 0.5rem;
+        }
+        
+        #export-pdf-button {
+            background-color: var(--primary-blue); 
+            font-size: 0.95rem;
+            width: 100%; /* Full width for mobile */
+            padding: 0.9rem 1.2rem; 
+        }
+        #export-pdf-button:hover {
+            background-color: var(--darker-blue);
+        } 
+
+        /* ====== Debtors Table Styles (Mobile-First Card View) ====== */
+        #debtors-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 2rem; 
+            box-shadow: 0 4px 15px var(--box-shadow-soft);
+            border-radius: 10px;
+            overflow: hidden; /* To keep rounded corners for the entire table */
+        }
+
+        #debtors-table caption {
+            caption-side: top;
+            text-align: right;
+            margin-bottom: 0.6rem;
+            font-weight: 600;
+            color: var(--secondary-text-color);
+            font-size: 0.9rem;
+        }
+
+        /* Hide table header on small screens and transform rows into "cards" */
+        #debtors-table thead {
+            display: none; 
+        }
+        #debtors-table tbody tr {
+            background-color: var(--container-bg);
+            border-bottom: 1px solid var(--border-light); /* Visual separation between cards (can be margin too) */
+            cursor: pointer;
+            transition: background-color var(--transition-speed) ease, transform 0.15s ease, box-shadow var(--transition-speed) ease;
+            display: block; /* Make row act as a block (card) */
+            margin-bottom: 0.8rem; /* Spacing between cards */
+            border-radius: 8px; /* Card corners */
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05); /* Light shadow for cards */
+            overflow: hidden;
+            border: 1px solid var(--border-light); /* Card border */
+        }
+        #debtors-table tbody tr:nth-child(odd) {
+            background-color: #fcfdfe;
+        }
+        #debtors-table tbody tr:hover {
+            background-color: var(--light-blue-selected); 
+            transform: translateY(-2px); /* Slight lift effect */
+            box-shadow: 0 6px 12px rgba(61, 120, 178, 0.1); 
+        }
+        #debtors-table tbody tr.selected {
+            background-color: var(--light-blue-selected);
+            border-color: var(--primary-blue);
+            outline: 2px solid var(--primary-blue); /* Clear outline for selected item */
+            position: relative;
+            z-index: 1;
+            transform: translateY(-2px); 
+            box-shadow: 0 6px 12px rgba(61, 120, 178, 0.1); 
+        }
+
+        #debtors-table tbody td {
+            padding: 0.9rem 1.2rem; 
+            border: none; /* Remove inner cell borders in card view */
+            border-bottom: 1px dashed var(--border-light); /* Dashed border between card fields */
+            vertical-align: middle;
+            color: var(--primary-text-color);
+            font-size: 0.9rem;
+            display: flex; /* Allow label and value to sit on one line */
+            justify-content: space-between; /* Label on right, value on left */
+            align-items: center;
+            flex-wrap: wrap; /* Allow text to wrap if long */
+        }
+        #debtors-table tbody td:last-child {
+            border-bottom: none; /* Remove border from the last field in a card */
+        }
+        /* Display label using data-label (Crucial for Mobile-First Card View) */
+        #debtors-table tbody td:before {
+            content: attr(data-label);
+            font-weight: 600;
+            color: var(--secondary-text-color);
+            min-width: 70px; /* Consistent label alignment */
+            margin-left: 1rem; /* Space between label and value */
+            flex-shrink: 0; /* Prevent label from shrinking */
+        }
+        #debtors-table tbody td strong {
+            font-weight: 700;
+            color: var(--primary-blue);
+        }
+
+        #debtors-table tbody td .phone-list {
+            display: flex; /* Display phone numbers horizontally (with wrapping) */
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            justify-content: flex-end; /* Align numbers to the right */
+            flex-grow: 1; /* Take remaining space */
+        }
+        #debtors-table tbody td .phone-list span {
+            display: inline-block; 
+            font-size: 0.8rem;
+            color: var(--secondary-text-color);
+            white-space: nowrap; /* Prevent phone number from splitting */
+        }
+        
+        #debtors-table tbody td .amount-display {
+            color: var(--warning-yellow); 
+            font-weight: 700;
+            font-size: 1.2rem; /* Font size to maintain consistent look */
+            font-family: 'Inter', sans-serif; /* Dedicated font for numbers */
+            flex-grow: 1; 
+            text-align: left; /* Align amount to the left for readability in cards */
+        }
+
+        .empty-table-message td {
+            text-align: center;
+            color: var(--secondary-text-color);
+            padding: 1.5rem; 
+            display: block; /* To act as a block and take full width */
+            border-radius: 8px; /* Consistent with card styles */
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05); /* Light shadow */
+            border: 1px solid var(--border-light);
+            margin-top: 0.8rem; /* Space from section title */
+            margin-bottom: 0.8rem; /* Space from other elements */
+        }
+
+        /* ====== Action Area (Responsive) ====== */
+        .action-area {
+            background-color: var(--container-bg); 
+            padding: 1.8rem; 
+            border-radius: 12px; 
+            border: 1px solid var(--border-light);
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+            display: none; /* Visibility controlled by JavaScript */
+            box-shadow: 0 4px 16px var(--box-shadow-soft);
+        }
+
+        .action-area h3 {
+            text-align: center;
+            margin-bottom: 1.5rem; 
+            font-weight: 700;
+        }
+        .action-area .selected-debtor-name {
+            font-weight: 700;
+            color: var(--primary-blue);
+            margin-bottom: 1.8rem; 
+            display: block;
+            font-size: 1.4rem; 
+            text-align: center;
+        }
+
+        .action-group {
+            display: flex;
+            flex-direction: column; /* Column layout by default for mobile */
+            gap: 0.8rem; 
+            margin-bottom: 1.2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px dashed var(--border-light); 
+        }
+        .action-group > div {
+            flex-grow: 1;
+            width: 100%; /* Full width for mobile */
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .action-group label {
+            margin-bottom: 0.5rem; 
+            font-weight: 600;
+            color: var(--secondary-text-color);
+            font-size: 0.9rem;
+            width: 100%;
+        }
+        .action-group input[type="number"],
+        .action-group input[type="datetime-local"] {
+            width: 100%; 
+            padding: 0.8rem; 
+            font-size: 0.95rem;
+            display: block;
+            margin-bottom: 0;
+        }
+        .action-group button {
+            width: 100%; /* Buttons take full width on mobile */
+            padding: 0.9rem 1.2rem; 
+            font-size: 0.95rem; 
+            margin-top: 0.8rem; 
+            flex-grow: 1; 
+        }
+
+        .action-buttons {
+            display: flex;
+            flex-direction: column; /* Column layout by default for mobile */
+            gap: 0.6rem; 
+            justify-content: center;
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-light);
+        }
+        .action-buttons button {
+            flex-grow: 1;
+            width: 100%; 
+            padding: 0.8rem 1rem; 
+            font-size: 0.9rem; 
+        }
+        #add-payment-button {
+            background-color: var(--warning-yellow);
+        }
+        #add-payment-button:hover {
+            background-color: var(--darker-yellow);
+        }
+
+        #edit-debtor-button {
+            background-color: var(--primary-blue);
+        }
+        #edit-debtor-button:hover {
+            background-color: var(--darker-blue);
+        }
+
+        #delete-debtor-button {
+            background-color: var(--danger-red);
+        }
+        #delete-debtor-button:hover {
+            background-color: var(--darker-red);
+        }
+
+        /* ====== Payment History (Responsive) ====== */
+        #payment-history {
+            margin-top: 1.8rem;
+            border-top: 1px dashed var(--border-light);
+            padding-top: 1.5rem;
+        }
+
+        #payment-history h3 {
+            margin-top: 0;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        #payments-list {
+            list-style: none;
+            padding: 0;
+        }
+        #payments-list li {
+            background-color: var(--container-bg);
+            padding: 1rem; 
+            margin-bottom: 0.6rem;
+            border-radius: 6px; 
+            font-size: 0.85rem;
+            display: flex;
+            flex-direction: column; /* Column layout for mobile */
+            justify-content: space-between;
+            align-items: flex-start; /* Align list items to top for multi-line text */
+            border: 1px solid var(--border-light);
+            border-right: 4px solid var(--primary-blue); /* Thinner stripe */
+            flex-wrap: wrap; /* Allow wrapping */
+            gap: 0.5rem;
+            box-shadow: 0 1px 5px rgba(0,0,0,0.03); 
+        }
+        #payments-list li span {
+            word-break: break-word; /* Allow long words to break */
+        }
+        #payments-list li span:first-child {
+            flex-grow: 1;
+        }
+        #payments-list li span:last-child {
+            white-space: normal; /* Allow date/time to wrap on mobile */
+            text-align: right; 
+            font-size: 0.75rem; /* Smaller font size for date/time */
+            color: var(--secondary-text-color);
+        }
+        #payments-list li.empty-message {
+             text-align:center; 
+             color:var(--secondary-text-color);
+             display:block;
+             width:100%;
+             border-right: none; /* No stripe for empty messages */
+             padding: 1rem 1.2rem;
+             font-size: 0.9rem;
+        }
+
+        /* ====== Monthly Income Display ====== */
+        .monthly-income {
+            background-color: var(--container-bg); 
+            color: var(--primary-text-color);
+            padding: 2rem; 
+            border-radius: 12px; 
+            border: 1px solid var(--border-light);
+            text-align: center;
+            font-size: 1rem;
+            margin-top: 2rem;
+            box-shadow: 0 4px 16px var(--box-shadow-soft);
+        }
+        .monthly-income strong {
+            font-family: 'Inter', sans-serif; /* Dedicated font for numbers */
+            font-size: 2.2rem; 
+            font-weight: 700;
+            color: var(--success-green); 
+            display: block;
+            margin-top: 0.6rem;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* ====== Media Queries - Transition from Mobile to Tablet/Desktop ====== */
+
+        /* For tablet screens and above (width >= 769px) */
+        @media (min-width: 769px) { 
+            html {
+                font-size: 112.5%; /* Makes 1rem = 18px (global scaling) */
+            }
+            body {
+                padding: 1.5rem; 
+            }
+            h1 {
+                font-size: 3rem; 
+                margin-bottom: 3rem;
+                padding-bottom: 0.8rem;
+            }
+            h2 {
+                font-size: 2.2rem; 
+                margin-top: 2.5rem;
+                margin-bottom: 1.5rem;
+                padding-bottom: 1rem; 
+            }
+            h3 {
+                font-size: 1.6rem; 
+                margin-top: 1.2rem;
+                margin-bottom: 1.2rem;
+            }
+            .container {
+                padding: 3rem; 
+                border-radius: 20px; 
+                margin: 2.5rem auto; 
+                box-shadow: 0 8px 24px var(--box-shadow-soft);
+            }
+            .header-bar, .footer-bar {
+                height: 8px;
+                border-radius: 8px;
+            }
+            .header-bar {
+                margin-bottom: 3rem;
+            }
+            .footer-bar {
+                margin-top: 3rem;
+            }
+
+            form {
+                padding: 2.5rem; 
+                border-radius: 15px; 
+                margin-bottom: 3rem;
+            }
+            .form-group {
+                margin-bottom: 1.8rem; 
+            }
+            .form-group label {
+                font-size: 1rem;
+                margin-bottom: 0.8rem;
+            }
+            .form-group input[type="text"],
+            .form-group input[type="tel"],
+            .form-group input[type="number"],
+            .form-group input[type="datetime-local"],
+            #search-input {
+                padding: 1.1rem;
+                font-size: 1.15rem;
+            }
+            .initial-amount-group small {
+                font-size: 0.9rem;
+            }
+
+            button {
+                padding: 1.1rem 2rem;
+                font-size: 1.15rem;
+                border-radius: 12px;
+                margin-top: 1.2rem; 
+                max-width: 300px; /* Limit button width on desktop */
+                width: auto;
+            }
+            .cancel-button {
+                margin-top: 1.2rem;
+            }
+
+
+            /* Revert to horizontal flexbox in search & export area */
+            #search-export-area {
+                flex-direction: row; 
+                align-items: flex-end; /* Align items to baseline */
+                gap: 1.8rem;
+                margin-bottom: 2.5rem;
+                padding-bottom: 1.8rem;
+            }
+            #search-input-group {
+                margin-bottom: 0;
+            }
+            #search-input-group label {
+                margin-bottom: 0.8rem;
+            }
+            #export-pdf-button {
+                width: auto; /* Revert to content width */
+                min-width: 160px; /* Minimum width for button */
+                margin-top: 0; /* Remove top margin applied on mobile */
+                font-size: 1.1rem;
+            }
+
+            /* Restore traditional table style for desktop */
+            #debtors-table thead {
+                display: table-header-group; /* Show table header again */
+            }
+            #debtors-table thead th {
+                background-color: var(--primary-blue);
+                color: white;
+                padding: 1.4rem 1.8rem; 
+                font-weight: 600;
+                text-align: right;
+                border: 1px solid var(--darker-blue);
+                font-size: 1.1rem;
+            }
+            #debtors-table tbody tr {
+                display: table-row; /* Make row act as a normal table row */
+                margin-bottom: 0; 
+                border-radius: 0;
+                box-shadow: none;
+                border: none; /* Remove card border */
+            }
+            #debtors-table tbody tr:nth-child(odd) {
+                background-color: #fcfdfe; /* Re-apply background color */
+            }
+            #debtors-table tbody tr.selected {
+                 outline: 3px solid var(--primary-blue);
+            }
+
+            #debtors-table tbody td {
+                display: table-cell; /* Make cell act as a normal table cell */
+                border: 1px solid var(--border-light); /* Re-apply cell borders */
+                padding: 1.3rem 1.8rem; 
+                justify-content: flex-start; /* Normal table alignment */
+                font-size: 0.95rem;
+            }
+            #debtors-table tbody td:before {
+                content: none; /* Hide labels shown on mobile */
+            }
+            #debtors-table tbody td .amount-display {
+                font-size: 1.4rem;
+                text-align: right; 
+            }
+            #debtors-table tbody td .phone-list {
+                justify-content: flex-start;
+                flex-wrap: nowrap; /* Phone numbers in one line on desktop */
+            }
+
+            .action-area {
+                padding: 3rem; 
+                margin-top: 3rem;
+                margin-bottom: 3rem;
+                box-shadow: 0 6px 18px var(--box-shadow-soft);
+            }
+            .action-area .selected-debtor-name {
+                font-size: 1.8rem; 
+                margin-bottom: 2.5rem; 
+            }
+            .action-group {
+                flex-direction: row; /* Revert to horizontal flexbox */
+                align-items: flex-end;
+                gap: 1.8rem; 
+                margin-bottom: 1.8rem;
+                padding-bottom: 1.5rem;
+                flex-wrap: nowrap; /* Prevent wrapping on desktop */
+            }
+            .action-group > div {
+                min-width: 180px; 
+            }
+            .action-group button {
+                width: auto; 
+                padding: 1.1rem 2rem; 
+                font-size: 1.1rem; 
+                margin-top: 1.2rem; 
+                max-width: 250px; 
+            }
+            .action-buttons {
+                flex-direction: row; /* Revert to horizontal flexbox */
+                gap: 1.5rem; 
+                justify-content: center;
+                margin-top: 2rem;
+                padding-top: 1.5rem;
+                flex-wrap: nowrap;
+            }
+            .action-buttons button {
+                max-width: 300px; 
+                padding: 1rem 1.8rem; 
+                font-size: 1.05rem; 
+            }
+
+            #payment-history {
+                margin-top: 2.5rem;
+                padding-top: 2rem;
+            }
+            #payment-history h3 {
+                font-size: 1.5rem;
+                margin-bottom: 1.5rem;
+            }
+            #payments-list li {
+                padding: 1.2rem 1.5rem; 
+                margin-bottom: 1rem;
+                font-size: 0.95rem;
+                flex-direction: row; /* Revert to horizontal flexbox */
+                align-items: center;
+                gap: 1rem;
+                border-right: 8px solid var(--primary-blue);
+                border-left: none; 
+            }
+            #payments-list li span:last-child {
+                text-align: right;
+                white-space: nowrap; /* Date/time in one line on desktop */
+                font-size: 0.85rem; /* Font size for date in list on desktop */
+            }
+            .monthly-income {
+                padding: 3rem;
+                margin-top: 3rem;
+                font-size: 1.3rem;
+                box-shadow: 0 8px 25px var(--box-shadow-soft);
+            }
+            .monthly-income strong {
+                font-size: 3rem; 
+            }
+        }
+
+        /*
+        ====== PDF Export Styles (Applied only during html2canvas capture) ======
+        These styles ensure the content looks clean and professional when exported to PDF,
+        potentially overriding some live UI styles for optimal print appearance.
+        The `!important` rule is often necessary here.
+        */
+        .for-pdf-export {
+            background-color: #FFFFFF !important; 
+            padding: 40px !important; /* Larger inner padding for PDF */
+            font-family: 'Noto Sans Arabic', sans-serif !important; 
+            color: #333 !important; 
+            direction: rtl !important; 
+            text-align: right !important; 
+            font-size: 12pt !important; /* Fixed font size for readability on PDF */
+            line-height: 1.5 !important;
+            width: 100% !important; 
+            box-shadow: none !important; 
+            border: none !important; 
+            min-height: auto !important; /* Remove any fixed heights */
+        }
+        .for-pdf-export h1, .for-pdf-export h2, .for-pdf-export h3 {
+             color: var(--primary-blue) !important; 
+             text-align: center !important; 
+             border-bottom: 1px solid var(--primary-blue) !important; 
+             padding-bottom: 10px !important;
+             margin-bottom: 20px !important;
+             margin-top: 30px !important;
+             page-break-after: avoid; /* Avoid breaking page right after a heading */
+        }
+        .for-pdf-export h1 {
+            font-size: 28pt !important;
+            margin-bottom: 30px !important;
+            border-color: #3D78B2 !important; /* Specific border color for headings in PDF */
+        }
+        .for-pdf-export h2 {
+            font-size: 20pt !important;
+            text-align: right !important; /* Align debtor names to right in PDF */
+            border-bottom: 1px dashed var(--border-light) !important; /* Subtle border for debtor name */
+            padding-bottom: 8px !important; /* Added padding below for spacing from border */
+            margin-top: 25px !important; /* Space between debtors */
+            margin-bottom: 15px !important; /* Slightly increased bottom margin for better separation */
+            color: var(--primary-blue) !important; /* Keep primary color for debtor names */
+        }
+        .for-pdf-export h3 { /* Used for "Payment History" sub-heading */
+            font-size: 14pt !important;
+            text-align: right !important;
+            margin-top: 15px !important;
+            margin-bottom: 10px !important;
+            padding-bottom: 5px !important;
+            border-bottom: 1px dashed #DDD !important;
+            color: var(--secondary-text-color) !important;
+        }
+
+        /* Styles for individual debtor sections in PDF */
+        .for-pdf-export .pdf-debtor-section {
+            background-color: #F8F9FA !important; /* Light background for each debtor section */
+            border: 1px solid #DBE4ED !important;
+            border-radius: 8px !important;
+            padding: 20px 25px !important;
+            margin-bottom: 30px !important; /* Space between debtor reports */
+            page-break-inside: avoid; /* Keep entire section on one page if possible */
+        }
+        .for-pdf-export .pdf-details p {
+            margin-bottom: 8px !important;
+            font-size: 11pt !important;
+            line-height: 1.4 !important;
+        }
+        .for-pdf-export .pdf-details strong {
+            color: #555 !important;
+            margin-left: 10px !important;
+            font-weight: 600 !important;
+        }
+        .for-pdf-export .pdf-details span[dir="ltr"] { /* Style for original amount */
+            font-family: 'Inter', sans-serif !important;
+            font-size: 12pt !important;
+            font-weight: 700 !important;
+            color: var(--primary-blue) !important;
+        }
+
+        /* NEW: Highlight current amount more clearly in PDF */
+        .for-pdf-export .pdf-details span.highlight-amount {
+            color: var(--warning-yellow) !important; 
+            font-size: 14pt !important; 
+            font-weight: 700 !important;
+            font-family: 'Inter', sans-serif !important;
+        }
+
+        /* Styles for payment history list in PDF */
+        .for-pdf-export .pdf-payments-list {
+            list-style: none !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            margin-top: 10px !important;
+            /* Added visual boundary for the list itself */
+            border: 1px solid #E0E0E0 !important; 
+            border-radius: 6px !important; 
+            padding: 12px !important; /* Increased padding within the list container */
+            background-color: #FFFFFF !important;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05); /* Soft shadow for the list */
+        }
+        .for-pdf-export .pdf-payments-list li {
+            display: flex !important;
+            justify-content: space-between !important;
+            padding: 10px 12px !important; /* Increased padding for each list item */
+            margin-bottom: 8px !important; /* Increased margin between items */
+            border-bottom: 1px dashed #F0F0F0 !important;
+            font-size: 11pt !important; /* Slightly larger font for clarity */
+            line-height: 1.4 !important;
+            page-break-inside: avoid; /* Prevent breaking payment items */
+            border-radius: 4px; /* Small border radius for list items */
+            background-color: #FAFAFA !important; /* Very light background for items */
+            border: 1px solid #EEE !important; /* Light border around each item */
+            box-shadow: 0 0px 2px rgba(0,0,0,0.02); /* Minimal shadow for items */
+        }
+        .for-pdf-export .pdf-payments-list li:last-child {
+            border-bottom: none !important;
+            margin-bottom: 0 !important;
+        }
+        .for-pdf-export .pdf-payments-list li span:first-child strong {
+            color: var(--success-green) !important; /* Green for paid amount */
+            font-family: 'Inter', sans-serif !important;
+            font-size: 12pt !important; /* Larger for paid amount in list */
+            font-weight: 700 !important;
+        }
+        .for-pdf-export .pdf-payments-list li span:last-child {
+            color: var(--secondary-text-color) !important;
+            font-size: 10pt !important; /* Larger for date/time */
+            white-space: nowrap !important;
+        }
+        .for-pdf-export .pdf-payments-list .empty-message-pdf {
+            text-align: center !important;
+            color: #888 !important;
+            font-style: italic !important;
+            padding: 15px !important; /* More padding for empty message */
+            font-size: 11pt !important;
+            border: none !important; 
+            display: block !important; 
+        }
+
+        .for-pdf-export .pdf-summary {
+            background-color: var(--primary-blue) !important;
+            color: white !important;
+            padding: 30px 40px !important; /* More padding for summary */
+            border-radius: 12px !important;
+            text-align: center !important;
+            margin-top: 40px !important;
+            font-size: 18pt !important; /* Larger font size for overall summary */
+            font-weight: 600 !important;
+        }
+        .for-pdf-export .pdf-summary h2 {
+            color: white !important; /* Heading color for summary in PDF */
+            font-size: 20pt !important; /* Larger heading in summary */
+            margin-bottom: 0 !important;
+            padding-bottom: 0 !important;
+            border-bottom: none !important;
+            text-align: center !important;
+        }
+        .for-pdf-export .pdf-summary strong {
+            font-size: 28pt !important; /* Significantly larger for income amount */
+            font-weight: 700 !important;
+            color: var(--warning-yellow) !important; /* Income color in summary */
+            display: inline !important; 
+            margin-left: 10px !important;
+            font-family: 'Inter', sans-serif !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="main-content-for-pdf"> 
+        <div class="header-bar"></div>
+        <h1>نظام المحاسبة المبسط</h1>
+
+        <form id="debtor-form" data-mode="add">
+            <h2 id="form-title" style="text-align:center;">إضافة شخص جديد</h2>
+            <input type="hidden" id="form-debtor-id">
+            
+            <div class="form-group">
+                <label for="name">الاسم:</label>
+                <input type="text" id="name" required placeholder="ادخل اسم الشخص كاملاً">
+            </div>
+            
+            <div class="form-group">
+                <label for="phone1">الهاتف الرئيسي (اختياري):</label>
+                <input type="tel" id="phone1" placeholder="مثال 01234567890">
+            </div>
+            
+            <div class="form-group">
+                <label for="phone2">هاتف إضافي (اختياري):</label>
+                <input type="tel" id="phone2" placeholder="مثال 01xxxxxxxxx أو يمكن تركه فارغاً">
+            </div>
+            
+            <div class="form-group">
+                <label for="goods">نوع البضاعة / الخدمة (اختياري):</label>
+                <input type="text" id="goods" placeholder="مثال ملابس جاهزة، خدمات صيانة، معدات كهربائية">
+            </div>
+            
+            <div class="form-group initial-amount-group">
+                <label for="initial-amount">المبلغ المستحق بالكامل عند الإضافة:</label>
+                <input type="number" id="initial-amount" min="0" step="0.01" required placeholder="ادخل المبلغ كاملاً (مثلاً 500.00)">
+                <small id="initial-amount-note" class="hidden">* ملاحظة: لا يمكن تعديل المبلغ المستحق بالكامل بعد الإضافة. لتغيير الرصيد، يمكنك تسجيل دفعات فقط.</small>
+            </div>
+            
+            <button type="submit" id="form-submit-button">
+                <span>إضافة الشخص</span>
+            </button>
+            <button type="button" id="cancel-edit-button" class="cancel-button hidden">
+                <span>إلغاء التعديل</span>
+            </button>
+        </form>
+
+        <div id="search-export-area">
+            <div id="search-input-group" class="form-group">
+                <label for="search-input">البحث بالاسم أو رقم الهاتف أو نوع البضاعة:</label>
+                <input type="text" id="search-input" placeholder="ابحث بالاسم، الهاتف، أو البضاعة...">
+            </div>
+            <button type="button" id="export-pdf-button">
+                <span>تصدير البيانات (PDF)</span>
+            </button>
+        </div>
+
+        <h2>الأشخاص المدينون</h2>
+        <table id="debtors-table">
+            <caption>قائمة الأشخاص المدينين وأرصدتهم المتبقية. انقر على صف لتسجيل دفعة أو تعديل/حذف البيانات.</caption>
+            <thead>
+                <tr>
+                    <th>الاسم</th>
+                    <th>الهاتف</th>
+                    <th>البضاعة/الخدمة</th>
+                    <th>المبلغ المتبقي</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td colspan="4" class="empty-table-message">جارٍ تحميل الأشخاص...</td></tr>
+            </tbody>
+        </table>
+
+        <div id="action-area" class="action-area">
+            <h3>إجراءات متعلقة بالشخص المختار: <span class="selected-debtor-name"></span></h3>
+            
+            <div class="action-group">
+                <div>
+                    <label for="payment-amount">مبلغ الدفعة الجديدة:</label>
+                    <input type="number" id="payment-amount" min="0.01" step="0.01" required placeholder="ادخل مبلغ الدفعة (مثلاً 100.00)">
+                </div>
+                <div>
+                    <label for="payment-date">تاريخ ووقت الدفعة:</label>
+                    <input type="datetime-local" id="payment-date" required>
+                </div>
+                <button type="button" id="add-payment-button">
+                    <span>تسجيل الدفعة</span>
+                </button>
+            </div>
+            
+            <div id="payment-history">
+                <h3>سجل الدفعات:</h3>
+                <ul id="payments-list">
+                    <li class="empty-message">لا يوجد سجل دفعات لهذا الشخص حتى الآن.</li>
+                </ul>
+            </div>
+            
+            <div class="action-buttons">
+                <button type="button" id="edit-debtor-button">
+                    <span>تعديل بيانات الشخص</span>
+                </button>
+                <button type="button" id="delete-debtor-button">
+                    <span>حذف الشخص</span>
+                </button>
+            </div>
+        </div>
+
+        <div id="monthly-income-display" class="monthly-income">
+            <h2 style="margin-top:0; padding-bottom:0; border-bottom:none;">إجمالي إيراد الشهر الحالي: <strong id="current-month-income">0.00</strong></h2>
+        </div>
+
+        <div class="footer-bar"></div>
+    </div>
+
+    <script>
+        const DEBTORS_STORAGE_KEY = 'simpleAccountingDebtors';
+        let debtors = [];
+
+        const debtorForm = document.getElementById('debtor-form');
+        const formTitle = document.getElementById('form-title');
+        const formDebtorIdInput = document.getElementById('form-debtor-id');
+        const nameInput = document.getElementById('name');
+        const phone1Input = document.getElementById('phone1');
+        const phone2Input = document.getElementById('phone2');
+        const goodsInput = document.getElementById('goods');
+        const initialAmountInput = document.getElementById('initial-amount');
+        const initialAmountGroup = document.querySelector('.initial-amount-group');
+        const initialAmountNote = document.getElementById('initial-amount-note');
+        const formSubmitButton = document.getElementById('form-submit-button');
+        const cancelEditButton = document.getElementById('cancel-edit-button');
+        const searchInput = document.getElementById('search-input');
+        const exportPdfButton = document.getElementById('export-pdf-button');
+        const debtorsTableBody = document.querySelector('#debtors-table tbody');
+        const actionArea = document.getElementById('action-area');
+        const selectedDebtorNameSpan = actionArea.querySelector('.selected-debtor-name');
+        const paymentAmountInput = document.getElementById('payment-amount');
+        const paymentDateInput = document.getElementById('payment-date');
+        const addPaymentButton = document.getElementById('add-payment-button');
+        const editDebtorButton = document.getElementById('edit-debtor-button');
+        const deleteDebtorButton = document.getElementById('delete-debtor-button');
+        const paymentHistoryDiv = document.getElementById('payment-history');
+        const paymentsListUl = document.getElementById('payments-list');
+        const currentMonthIncomeSpan = document.getElementById('current-month-income');
+        const mainContentForPdf = document.getElementById('main-content-for-pdf'); // The element to be captured for PDF
+
+        let selectedDebtorId = null;
+
+        /**
+         * Checks if LocalStorage is supported and available in the browser.
+         * Displays an alert and disables controls if not supported.
+         * @returns {boolean} True if LocalStorage is supported, false otherwise.
+         */
+        function checkLocalStorageSupport() {
+            try {
+                const testKey = '__storage_test__';
+                localStorage.setItem(testKey, testKey);
+                localStorage.removeItem(testKey);
+                return true;
+            } catch (e) {
+                alert("متصفحك لا يدعم LocalStorage أو أنه غير متاح. لن يتم حفظ البيانات. يرجى التحقق من إعدادات المتصفح أو استخدام وضع يسمح بالتخزين.");
+                console.error("Local Storage not available or blocked:", e);
+                // Disable key buttons if storage is an issue to prevent user frustration
+                [formSubmitButton, addPaymentButton, editDebtorButton, deleteDebtorButton, searchInput, exportPdfButton].forEach(el => {
+                    if (el) el.disabled = true;
+                });
+                return false;
+            }
+        }
+
+        /**
+         * Loads debtor data from LocalStorage.
+         * Handles parsing, data integrity (missing payments array, types), and assigns unique IDs if missing.
+         * @returns {Array<Object>} An array of debtor objects.
+         */
+        function loadDebtors() {
+            if (!checkLocalStorageSupport()) return [];
+            try {
+                const data = localStorage.getItem(DEBTORS_STORAGE_KEY);
+                if (data) {
+                    const parsedData = JSON.parse(data);
+                    return parsedData.map(d => {
+                        // Ensure payments property exists and is an array
+                        if (!d.payments || !Array.isArray(d.payments)) d.payments = [];
+                        else {
+                            // Ensure amount is float and date is ISO string, handling potential malformed data
+                            d.payments = d.payments.map(p => ({
+                                amount: parseFloat(p.amount) || 0,
+                                // Convert date to ISO string for consistency and validity
+                                date: (p.date && !isNaN(new Date(p.date).getTime())) ? new Date(p.date).toISOString() : new Date().toISOString()
+                            }));
+                        }
+                        // Ensure optional fields are strings, default to empty string if missing or null
+                        d.phone1 = d.phone1 || '';
+                        d.phone2 = d.phone2 || '';
+                        d.goods = d.goods || '';
+                        // Ensure amounts are numbers
+                        d.initialAmount = parseFloat(d.initialAmount) || 0;
+                        d.currentAmount = parseFloat(d.currentAmount) || 0;
+                        
+                        // Assign a unique ID if it's missing (for backward compatibility with older data structures)
+                        if (d.id === undefined || d.id === null) {
+                            d.id = Date.now() + Math.random(); 
+                        }
+                        return d;
+                    });
+                } else {
+                    return []; // Return empty array if no data in storage
+                }
+            } catch (error) {
+                console.error("خطأ أثناء تحميل المدينين من Local Storage:", error);
+                const confirmClear = confirm("حدث خطأ أثناء تحميل البيانات من Local Storage. قد تكون البيانات تالفة. هل ترغب في مسح جميع البيانات المخزنة محلياً والبدء ببيانات فارغة؟ (لا يمكن التراجع عن هذا الإجراء)");
+                if (confirmClear) {
+                    localStorage.removeItem(DEBTORS_STORAGE_KEY);
+                    return [];
+                }
+                return []; // Return empty if error and user declines to clear data
+            }
+        }
+
+        /**
+         * Saves the current debtor data to LocalStorage.
+         * @param {Array<Object>} dataToSave - The array of debtor objects to save. Defaults to the global 'debtors' array.
+         */
+        function saveDebtors(dataToSave = debtors) {
+            if (!checkLocalStorageSupport()) return;
+            try {
+                // Create a clean copy to save, removing any temporary UI-specific properties
+                const cleanDebtors = dataToSave.map(d => {
+                    const cleaned = { ...d };
+                    delete cleaned.isOverdue; // Example: if a temp property like 'isOverdue' was added for UI display
+                    return cleaned;
+                });
+                localStorage.setItem(DEBTORS_STORAGE_KEY, JSON.stringify(cleanDebtors));
+            } catch (error) {
+                console.error("خطأ أثناء حفظ المدينين إلى Local Storage:", error);
+                alert("حدث خطأ أثناء حفظ البيانات إلى Local Storage. قد يكون التخزين ممتلئاً أو حدثت مشكلة أخرى.");
+            }
+        }
+
+        /**
+         * Renders the payment history list for the currently selected debtor.
+         */
+        function renderPaymentHistory() {
+            paymentsListUl.innerHTML = ''; // Clear previous history
+            if (selectedDebtorId === null) {
+                paymentsListUl.innerHTML = '<li class="empty-message">يرجى تحديد شخص من الجدول لعرض سجل الدفعات الخاص به.</li>';
+                return;
+            }
+
+            const selectedDebtor = debtors.find(d => d.id === selectedDebtorId);
+            
+            if (selectedDebtor && selectedDebtor.payments && selectedDebtor.payments.length > 0) {
+                // Sort payments from most recent to oldest for better readability
+                const sortedPayments = [...selectedDebtor.payments].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+                sortedPayments.forEach(payment => {
+                    const li = document.createElement('li');
+                    const date = new Date(payment.date);
+                    // Format date/time using ar-EG locale for Arabic formatting
+                    const formattedDate = isNaN(date.getTime()) ? 'تاريخ غير صالح' : date.toLocaleString('ar-EG', { 
+                        year: 'numeric', 
+                        month: 'numeric', 
+                        day: 'numeric', 
+                        hour: 'numeric', 
+                        minute: 'numeric' 
+                    });
+                    li.innerHTML = `
+                        <span>المبلغ: <strong dir="ltr">${payment.amount.toFixed(2)}</strong></span>
+                        <span>التاريخ والوقت: ${formattedDate}</span>
+                    `;
+                    paymentsListUl.appendChild(li);
+                });
+            } else if (selectedDebtor) {
+                // Display message if no payments for the selected debtor
+                paymentsListUl.innerHTML = '<li class="empty-message">لا يوجد سجل دفعات لهذا الشخص حتى الآن.</li>';
+            }
+        }
+
+        /**
+         * Renders the debtors table based on the provided list of debtors.
+         * Applies selected class if a debtor is currently selected.
+         * @param {Array<Object>} debtorsToRender - The array of debtor objects to display. Defaults to the global 'debtors' array.
+         */
+        function renderDebtors(debtorsToRender = debtors) {
+            debtorsTableBody.innerHTML = ''; // Clear existing table rows
+            if (debtorsToRender.length === 0) {
+                let emptyMessage = 'لا يوجد مدينون حاليًا. ابدأ بإضافة شخص جديد.';
+                if (searchInput.value.trim() !== '') {
+                    emptyMessage = 'لا توجد نتائج مطابقة في القائمة الحالية.'; // Message for no search results
+                }
+                const emptyRow = document.createElement('tr');
+                emptyRow.classList.add('empty-table-message');
+                emptyRow.innerHTML = `<td colspan="4">${emptyMessage}</td>`;
+                debtorsTableBody.appendChild(emptyRow);
+            } else {
+                debtorsToRender.forEach(debtor => {
+                    const tr = document.createElement('tr');
+                    tr.classList.add('debtor-row');
+                    tr.dataset.id = debtor.id; // Store unique ID for easy lookup
+                    if (selectedDebtorId !== null && debtor.id === selectedDebtorId) {
+                        tr.classList.add('selected'); // Highlight the currently selected row
+                    }
+
+                    // Format phone numbers display
+                    const phonesDisplay = [];
+                    if (debtor.phone1) phonesDisplay.push(`<span>${debtor.phone1}</span>`);
+                    if (debtor.phone2) phonesDisplay.push(`<span>${debtor.phone2}</span>`);
+                    const phoneHtml = phonesDisplay.length > 0 ? `<div class="phone-list">${phonesDisplay.join('')}</div>` : 'لا يوجد رقم هاتف';
+                    
+                    tr.innerHTML = `
+                        <td data-label="الاسم:"><strong>${debtor.name}</strong></td>
+                        <td data-label="الهاتف:">${phoneHtml}</td> <!-- Corrected: data-label="الهاتف:" instead of "الأساسيه:" -->
+                        <td data-label="البضاعة/الخدمة:">${debtor.goods || 'غير محدد'}</td>
+                        <td data-label="المبلغ المتبقي:"><span class="amount-display" dir="ltr">${debtor.currentAmount.toFixed(2)}</span></td>
+                    `;
+                    debtorsTableBody.appendChild(tr);
+                });
+                
+                // If a debtor was selected but is no longer in the filtered list (e.g., due to search), deselect it.
+                if (selectedDebtorId !== null) {
+                    const selectedRow = debtorsTableBody.querySelector(`.debtor-row[data-id="${selectedDebtorId}"]`);
+                    // Check if selected debtor is still present in the current rendered list.
+                    if (!selectedRow && !filterDebtors(searchInput.value).find(d => d.id === selectedDebtorId)) {
+                        resetSelectedDebtorState();
+                    } else if (selectedRow) {
+                        // Re-add selected class just in case re-rendering removed it from an already selected item
+                        selectedRow.classList.add('selected'); 
+                    }
+                }
+            }
+            updateActionAreaVisibility(); // Ensure action area reflects current selection state
+        }
+
+        /**
+         * Resets the form to "Add New Person" mode.
+         */
+        function setFormToAddMode() {
+            debtorForm.dataset.mode = 'add';
+            formTitle.textContent = 'إضافة شخص جديد';
+            formSubmitButton.textContent = 'إضافة الشخص';
+            formDebtorIdInput.value = ''; // Clear hidden ID field
+            debtorForm.reset(); // Clear all form fields
+            initialAmountGroup.classList.remove('hidden'); // Show initial amount field
+            initialAmountInput.required = true;
+            initialAmountInput.disabled = false;
+            initialAmountNote.classList.add('hidden'); // Hide specific note
+            cancelEditButton.classList.add('hidden'); // Hide cancel button
+            
+            // Set current date and time for the payment input by default
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const currentDateTimeLocal = `${year}-${month}-${day}T${hours}:${minutes}`;
+            if (paymentDateInput) { 
+                paymentDateInput.value = currentDateTimeLocal;
+            }
+        }
+
+        /**
+         * Sets the form to "Edit Person" mode, populating fields with debtor data.
+         * @param {Object} debtor - The debtor object whose details are to be edited.
+         */
+        function setFormToEditMode(debtor) {
+            debtorForm.dataset.mode = 'edit';
+            formTitle.textContent = `تعديل تفاصيل: ${debtor.name}`;
+            formSubmitButton.textContent = 'حفظ التعديلات';
+            formDebtorIdInput.value = debtor.id; // Populate hidden ID field
+            nameInput.value = debtor.name;
+            phone1Input.value = debtor.phone1;
+            phone2Input.value = debtor.phone2;
+            goodsInput.value = debtor.goods;
+            initialAmountGroup.classList.add('hidden'); // Hide initial amount in edit mode
+            initialAmountInput.required = false; 
+            initialAmountInput.disabled = true; // Disable initial amount for editing
+            initialAmountNote.classList.remove('hidden'); // Show note about initial amount
+            cancelEditButton.classList.remove('hidden'); // Show cancel button
+            debtorForm.scrollIntoView({ behavior: 'smooth', block: 'start' }); // Scroll form into view for user convenience
+        }
+
+        /**
+         * Resets the state of the selected debtor, deselecting any active row and hiding the action area.
+         */
+        function resetSelectedDebtorState() {
+            selectedDebtorId = null;
+            document.querySelectorAll('.debtor-row.selected').forEach(row => row.classList.remove('selected'));
+            updateActionAreaVisibility(); // Hide action area
+            renderPaymentHistory(); // Clear payment history display
+            setFormToAddMode(); // Reset form to add mode
+        }
+
+        /**
+         * Controls the visibility and content of the action area based on the selected debtor.
+         */
+        function updateActionAreaVisibility() {
+            if (selectedDebtorId !== null) {
+                const selectedDebtor = debtors.find(d => d.id === selectedDebtorId);
+                if (selectedDebtor) {
+                    selectedDebtorNameSpan.textContent = `${selectedDebtor.name}`;
+                    actionArea.style.display = 'block'; // Show action area
+                } else {
+                    resetSelectedDebtorState(); // If selected debtor somehow vanished (e.g. deleted by another process), reset
+                }
+            } else {
+                actionArea.style.display = 'none'; // Hide action area
+            }
+        }
+
+        /**
+         * Calculates and displays the total income from payments made in the current month.
+         */
+        function calculateMonthlyIncome() {
+            const now = new Date();
+            const currentYear = now.getFullYear();
+            const currentMonth = now.getMonth(); // 0-indexed month
+
+            let totalIncome = 0;
+
+            debtors.forEach(debtor => {
+                if (debtor.payments && Array.isArray(debtor.payments)) {
+                    debtor.payments.forEach(payment => {
+                        try {
+                            const paymentDate = new Date(payment.date);
+                            // Check if date is valid and falls within the current month/year
+                            if (!isNaN(paymentDate.getTime()) && paymentDate.getFullYear() === currentYear && paymentDate.getMonth() === currentMonth) {
+                                totalIncome += payment.amount;
+                            }
+                        } catch (e) {
+                            console.error("خطأ في تحليل تاريخ الدفعة لحساب إيراد الشهر:", payment, e);
+                        }
+                    });
+                }
+            });
+            currentMonthIncomeSpan.textContent = totalIncome.toFixed(2); // Display with 2 decimal places
+        }
+
+        /**
+         * Filters the list of debtors based on a search term.
+         * @param {string} searchTerm - The string to search for (name, phone, goods).
+         * @returns {Array<Object>} A filtered array of debtor objects.
+         */
+        function filterDebtors(searchTerm) {
+            const lowerSearchTerm = searchTerm.trim().toLowerCase();
+            if (lowerSearchTerm === '') {
+                return debtors; // Return all debtors if search term is empty
+            }
+            // Filter by name, phone numbers, or goods/service type
+            return debtors.filter(debtor => {
+                const nameMatch = debtor.name ? debtor.name.toLowerCase().includes(lowerSearchTerm) : false;
+                const phone1Match = debtor.phone1 ? debtor.phone1.includes(lowerSearchTerm) : false;
+                const phone2Match = debtor.phone2 ? debtor.phone2.includes(lowerSearchTerm) : false;
+                const goodsMatch = debtor.goods ? debtor.goods.toLowerCase().includes(lowerSearchTerm) : false;
+                return nameMatch || phone1Match || phone2Match || goodsMatch;
+            });
+        }
+
+        /**
+         * Generates and exports a detailed PDF report using html2canvas and jsPDF.
+         * Includes full debtor details, original amount, remaining amount, and detailed payment history.
+         */
+        async function exportDebtorsToPdf() {
+            if (debtors.length === 0) {
+                alert('لا توجد بيانات مدينين لتصدير التقارير.'); // Corrected typo
+                return;
+            }
+
+            // Check if required libraries are loaded
+            if (typeof html2canvas === 'undefined' || typeof window.jspdf === 'undefined' || typeof window.jspdf.jsPDF === 'undefined') {
+                alert('مكتبات html2canvas أو jsPDF لم يتم تحميلها بشكل صحيح. يرجى التحقق من اتصال الإنترنت.');
+                return;
+            }
+
+            let reportContentHtml = ``;
+
+            // Sort debtors by remaining amount (descending) for PDF readability
+            // Debtors with remaining amount first, then by name for remaining 0
+            const sortedDebtors = [...debtors].sort((a, b) => {
+                if (a.currentAmount > 0 && b.currentAmount === 0) return -1;
+                if (a.currentAmount === 0 && b.currentAmount > 0) return 1;
+                if (a.currentAmount === 0 && b.currentAmount === 0) return a.name.localeCompare(b.name);
+                return b.currentAmount - a.currentAmount;
+            });
+
+            sortedDebtors.forEach(debtor => {
+                const phonesList = [debtor.phone1, debtor.phone2].filter(Boolean).join(' / ') || 'لا يوجد رقم هاتف مسجل';
+                const goodsDisplay = debtor.goods || 'غير محدد';
+                
+                // Generate HTML for payment history, sorting from most recent to oldest
+                const paymentsHtml = debtor.payments && debtor.payments.length > 0 ?
+                    `<ul class="pdf-payments-list">${[...debtor.payments].sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime()).map(p => `
+                        <li>
+                            <span>المبلغ المدفوع: <strong dir="ltr">${p.amount.toFixed(2)}</strong></span>
+                            <span>التاريخ والوقت: ${new Date(p.date).toLocaleString('ar-EG', { year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric' })}</span>
+                        </li>
+                    `).join('')}</ul>`
+                    : '<ul class="pdf-payments-list"><li class="empty-message-pdf">لا يوجد سجل دفعات لهذا الشخص.</li></ul>';
+
+                reportContentHtml += `
+                    <div class="pdf-debtor-section">
+                        <h2>${debtor.name}</h2>
+                        <div class="pdf-details">
+                            <p><strong>الهاتف:</strong> ${phonesList}</p>
+                            <p><strong>البضاعة/الخدمة:</strong> ${goodsDisplay}</p>
+                            <p><strong>المبلغ المستحق الأصلي:</strong> <span dir="ltr">${debtor.initialAmount.toFixed(2)}</span></p>
+                            <p><strong>المبلغ المتبقي:</strong> <span dir="ltr" class="highlight-amount">${debtor.currentAmount.toFixed(2)}</span></p>
+                        </div>
+                        <h3>سجل الدفعات</h3>
+                        ${paymentsHtml}
+                    </div>
+                `;
+            });
+
+            // Create a temporary div to render content specifically for PDF capture
+            const tempDiv = document.createElement('div');
+            tempDiv.classList.add('for-pdf-export'); // Apply special styling for PDF export
+            // Include Noto Sans Arabic in temp div's style to ensure it's available for html2canvas rendering
+            tempDiv.style.fontFamily = 'Noto Sans Arabic, sans-serif'; 
+
+            tempDiv.innerHTML = `
+                <h1 style="text-align: center; color: var(--primary-blue);">تقرير تفصيلي عن المدينين</h1>
+                ${reportContentHtml}
+                <div class="pdf-summary">
+                    <h2 style="color: white; font-size: 1.5em; margin: 0; padding: 0; border: none;">
+                        إجمالي إيراد الشهر الحالي: <strong dir="ltr">${currentMonthIncomeSpan.textContent}</strong>
+                    </h2>
+                </div>
+            `;
+            document.body.appendChild(tempDiv); // Append temporary element to DOM for html2canvas to capture
+
+            try {
+                // Capture the content of the temporary div using html2canvas
+                const canvas = await html2canvas(tempDiv, {
+                    scale: 2, // Higher resolution capture for better text clarity
+                    useCORS: true, // Important for external resources like Google Fonts
+                    allowTaint: true, // Allows cross-origin images (use with caution), though mostly text here
+                    windowWidth: tempDiv.scrollWidth, // Ensure all content is captured
+                    windowHeight: tempDiv.scrollheight,
+                    width: tempDiv.scrollWidth,
+                    height: tempDiv.scrollHeight,
+                    // Use logging for debugging issues with content not being captured
+                    logging: false 
+                });
+                const imgData = canvas.toDataURL('image/png'); // Get base64 image data
+
+                // Initialize jsPDF
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF('p', 'mm', 'a4'); // 'p' for portrait, 'mm' for millimeters, 'a4' for A4 size
+
+                const imgWidth = 210; // A4 width in mm (210mm)
+                const pageHeight = 297; // A4 height in mm (297mm)
+                // Calculate image height scaled to A4 width, maintaining aspect ratio
+                const imgHeight = canvas.height * imgWidth / canvas.width; 
+                let heightLeft = imgHeight; // Remaining height to be drawn on PDF pages
+
+                let position = 0; // Current Y position on the PDF page
+
+                // Add the captured image to the first page
+                pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight); 
+                heightLeft -= pageHeight;
+
+                // Loop for additional pages if content exceeds one page
+                while (heightLeft > 0) {
+                    position = heightLeft - imgHeight; // Shift content up for the next page to reveal the remaining portion
+                    pdf.addPage(); // Add a new page
+                    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                    heightLeft -= pageHeight;
+                }
+                
+                // Save the PDF file
+                pdf.save(`تقرير_المحاسبة_المفصل_${new Date().toISOString().slice(0, 10)}.pdf`);
+                alert('تم تنزيل ملف الـ PDF بنجاح!');
+            } catch (error) {
+                console.error('حدث خطأ أثناء إنشاء ملف الـ PDF:', error);
+                alert('حدث خطأ أثناء إنشاء ملف الـ PDF. يرجى التأكد من عرض الصفحة بشكل صحيح أو المحاولة مرة أخرى.');
+            } finally {
+                // Always remove the temporary element from DOM to clean up
+                if (document.body.contains(tempDiv)) {
+                    document.body.removeChild(tempDiv);
+                }
+            }
+        }
+
+
+        // ====== Event Listeners (UI Interaction Logic) ======
+
+        // Handle form submission for adding or editing a debtor
+        debtorForm.addEventListener('submit', (e) => {
+            e.preventDefault(); 
+
+            const mode = debtorForm.dataset.mode;
+            // Get debtor ID from hidden field, convert to float if available, else null
+            const id = formDebtorIdInput.value ? parseFloat(formDebtorIdInput.value) : null; 
+            const name = nameInput.value.trim();
+            const phone1 = phone1Input.value.trim();
+            const phone2 = phone2Input.value.trim();
+            const goods = goodsInput.value.trim();
+            // Initial amount is only used when adding a new debtor
+            const initialAmount = mode === 'add' ? parseFloat(initialAmountInput.value) : null; 
+
+            // Basic validation for name
+            if (!name) {
+                alert('الاسم مطلوب، يرجى إدخال اسم الشخص.');
+                nameInput.focus();
+                return;
+            }
+
+            // Validation for initial amount in add mode
+            if (mode === 'add') {
+                if (isNaN(initialAmount) || initialAmount < 0) {
+                    alert('يرجى إدخال مبلغ مبدئي صالح (رقم موجب أو صفر).');
+                    initialAmountInput.focus();
+                    return;
+                }
+            }
+
+            // Logic for adding a new debtor
+            if (mode === 'add') {
+                // Check for duplicate names or phone numbers to prevent adding same person
+                const isDuplicate = debtors.some(d => 
+                    d.name === name || 
+                    (phone1 && d.phone1 === phone1 && d.phone1 !== '') || // Check primary phone if provided
+                    (phone2 && d.phone2 === phone2 && d.phone2 !== '')    // Check secondary phone if provided
+                );
+
+                if(isDuplicate) {
+                    alert('شخص بنفس الاسم أو رقم الهاتف الأساسي/الثانوي موجود بالفعل. لا يمكن إضافة هذا الشخص.');
+                    nameInput.focus();
+                    return;
+                }
+
+                // Create new debtor object
+                const newDebtor = {
+                    id: Date.now() + Math.random(), // Unique ID using timestamp + random for high uniqueness
+                    name: name,
+                    phone1: phone1,
+                    phone2: phone2,
+                    goods: goods,
+                    initialAmount: initialAmount,
+                    currentAmount: initialAmount, // Current amount starts with the initial amount
+                    payments: [] // Initialize with an empty array for payments
+                };
+                debtors.push(newDebtor); // Add new debtor to the array
+                alert('تم إضافة الشخص بنجاح!');
+                saveDebtors(); // Save updated data to LocalStorage
+                const filteredDebtors = filterDebtors(searchInput.value); // Re-render table with current search filter
+                renderDebtors(filteredDebtors);
+                setFormToAddMode(); // Reset form to "add new" state
+                resetSelectedDebtorState(); // Clear any selected debtor state
+                calculateMonthlyIncome(); // Recalculate and update monthly income display
+            } 
+            // Logic for editing an existing debtor
+            else if (mode === 'edit') {
+                const debtorIndex = debtors.findIndex(d => d.id === id);
+                if (debtorIndex > -1) {
+                    // Check for duplicate name/phone numbers, excluding the current debtor being edited
+                    const isDuplicate = debtors.some(d => 
+                        d.id !== id && 
+                        (d.name === name || 
+                         (phone1 && d.phone1 === phone1 && phone1 !== '') || 
+                         (phone2 && d.phone2 === phone2 && phone2 !== ''))
+                    );
+                    if(isDuplicate) {
+                        alert('لا يمكن حفظ التعديلات. يوجد شخص آخر بنفس الاسم أو رقم الهاتف بالفعل.');
+                        return;
+                    }
+
+                    // Update debtor properties
+                    debtors[debtorIndex].name = name;
+                    debtors[debtorIndex].phone1 = phone1;
+                    debtors[debtorIndex].phone2 = phone2;
+                    debtors[debtorIndex].goods = goods;
+
+                    // Update selected debtor name in action area if applicable
+                    if (selectedDebtorId !== null && selectedDebtorId === id) {
+                        selectedDebtorNameSpan.textContent = `${debtors[debtorIndex].name}`;
+                    }
+
+                    alert('تم تحديث بيانات الشخص بنجاح!');
+                    saveDebtors(); // Save updated data
+                    const filteredDebtors = filterDebtors(searchInput.value); 
+                    renderDebtors(filteredDebtors); // Re-render table to reflect changes
+                    setFormToAddMode(); // Reset form to "add new" state
+                } else {
+                    console.error('خطأ: المدين المراد تعديله غير موجود بالرقم التعريفي:', id);
+                    alert('حدث خطأ أثناء تحديد الشخص للتعديل. يرجى المحاولة مرة أخرى.');
+                    resetSelectedDebtorState(); 
+                    setFormToAddMode();
+                    renderDebtors();
+                }
+            }
+        });
+
+        // Event listener for the "Cancel Edit" button
+        cancelEditButton.addEventListener('click', () => {
+            setFormToAddMode(); // Reset form to add mode
+            updateActionAreaVisibility(); // Re-display action area if a debtor is still selected (though form is reset)
+        });
+
+        // Event listener for the search input (filters the table as user types)
+        searchInput.addEventListener('input', () => {
+            const searchTerm = searchInput.value;
+            const filteredDebtors = filterDebtors(searchTerm);
+            renderDebtors(filteredDebtors); 
+            resetSelectedDebtorState(); // Deselect any currently selected debtor during search
+        });
+
+        // Event listener for the "Export PDF" button
+        exportPdfButton.addEventListener('click', () => {
+            if (debtors.length === 0) {
+                alert('لا توجد بيانات مدينين لتصدير التقارير.'); // Corrected typo
+                return;
+            }
+            exportDebtorsToPdf(); // Call the PDF export function
+        });
+
+        // Event listener for clicks on debtor table rows (to select a debtor)
+        debtorsTableBody.addEventListener('click', (e) => {
+            const clickedRow = e.target.closest('.debtor-row'); // Find the closest row ancestor
+            if (clickedRow) {
+                const debtorId = parseFloat(clickedRow.dataset.id); // Get the unique ID from dataset
+                
+                // Validate if ID is a number
+                if (isNaN(debtorId)) {
+                    console.error('خطأ: الرقم التعريفي للمدين غير صالح في بيانات الصف:', clickedRow.dataset.id);
+                    alert('حدث خطأ أثناء تحديد المدين. يرجى المحاولة مرة أخرى.');
+                    return;
+                }
+
+                // If the same row is clicked again, deselect it (toggle functionality)
+                if (selectedDebtorId === debtorId) {
+                    resetSelectedDebtorState();
+                } else {
+                    // Deselect any previously selected row visually
+                    document.querySelectorAll('.debtor-row.selected').forEach(row => row.classList.remove('selected'));
+                    
+                    selectedDebtorId = debtorId; // Set the new selected debtor ID
+                    clickedRow.classList.add('selected'); // Add highlight class to the newly selected row
+
+                    const selectedDebtor = debtors.find(d => d.id === selectedDebtorId); // Find the full debtor object
+                    if (selectedDebtor) {
+                        selectedDebtorNameSpan.textContent = `${selectedDebtor.name}`; // Update name in action area
+                        paymentAmountInput.value = ''; // Clear payment amount input for new entry
+                        
+                        // Set current date/time for payment date input if not already set or cleared by user
+                        const now = new Date();
+                        const year = now.getFullYear();
+                        const month = String(now.getMonth() + 1).padStart(2, '0');
+                        const day = String(now.getDate()).padStart(2, '0');
+                        const hours = String(now.getHours()).padStart(2, '0');
+                        const minutes = String(now.getMinutes()).padStart(2, '0');
+                        const currentDateTimeLocal = `${year}-${month}-${day}T${hours}:${minutes}`;
+                        if (!paymentDateInput.value) { 
+                            paymentDateInput.value = currentDateTimeLocal;
+                        }
+
+                        updateActionAreaVisibility(); // Show the action area for the selected debtor
+                        renderPaymentHistory(); // Display payment history for the selected debtor
+                        
+                        // Scroll the action area into view with a slight delay for smoother animation
+                        setTimeout(() => { 
+                            actionArea.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }, 50);
+
+                        setFormToAddMode(); // Ensure the main form is in "add" mode when a debtor is selected for actions
+                    } else {
+                        console.error('خطأ: المدين المحدد غير موجود في مصفوفة البيانات بعد النقر:', selectedDebtorId);
+                        alert('حدث خطأ أثناء تحديد الشخص. يرجى المحاولة مرة أخرى.');
+                        resetSelectedDebtorState(); // Reset state if selected debtor is mysteriously missing
+                        renderDebtors(); // Re-render table to ensure data consistency
+                    }
+                }
+            }
+        });
+
+        // Event listener for the "Add Payment" button
+        addPaymentButton.addEventListener('click', () => {
+            if (selectedDebtorId === null) {
+                alert('يرجى تحديد شخص لتسجيل دفعة له.');
+                return;
+            }
+
+            const paymentAmountInputVal = paymentAmountInput.value;
+            const paymentAmount = parseFloat(paymentAmountInputVal);
+            const paymentDateString = paymentDateInput.value;
+            const paymentDate = new Date(paymentDateString);
+
+            // Validate payment amount
+            if (isNaN(paymentAmount) || paymentAmount <= 0) {
+                alert('يرجى إدخال مبلغ دفعة صالح (رقم أكبر من صفر).');
+                paymentAmountInput.value = ''; 
+                paymentAmountInput.focus();
+                return;
+            }
+
+            // Validate payment date
+            if (!paymentDateString || isNaN(paymentDate.getTime())) {
+                alert('يرجى إدخال تاريخ ووقت صالحين للدفع.');
+                paymentDateInput.focus();
+                return;
+            }
+
+            const debtorIndex = debtors.findIndex(d => d.id === selectedDebtorId);
+            if (debtorIndex > -1) {
+                const debtor = debtors[debtorIndex];
+                const tolerance = 0.005; // Small tolerance for floating-point inaccuracies when comparing amounts
+
+                // Check for overpayment with tolerance
+                if (paymentAmount > debtor.currentAmount + tolerance) {
+                    if (paymentAmount > debtor.currentAmount + 0.02) { // Prompt only if significantly over, to avoid bothering user for tiny discrepancies
+                        const confirmOverpayment = confirm(`مبلغ الدفعة (${paymentAmount.toFixed(2)}) يبدو أكبر من المبلغ المستحق المتبقي (${debtor.currentAmount.toFixed(2)}). هل تريد تسجيل الدفعة على أي حال؟`);
+                        if (!confirmOverpayment) {
+                            paymentAmountInput.focus();
+                            return;
+                        }
+                    }
+                }
+
+                // Add payment to debtor's payments array
+                debtor.payments.push({
+                    amount: paymentAmount,
+                    date: paymentDate.toISOString() // Store date in ISO format for consistency and ease of parsing
+                });
+
+                // Update current amount
+                debtor.currentAmount -= paymentAmount;
+                // Round to 2 decimal places and handle near-zero values to be exactly zero (avoids -0.000000001)
+                if (Math.abs(debtor.currentAmount) < tolerance) {
+                    debtor.currentAmount = 0;
+                } else {
+                    debtor.currentAmount = parseFloat(debtor.currentAmount.toFixed(2));
+                }
+
+                saveDebtors(); // Save updated data
+                const filteredDebtors = filterDebtors(searchInput.value); 
+                renderDebtors(filteredDebtors); // Re-render table to reflect new current amount
+                calculateMonthlyIncome(); // Recalculate monthly income
+                renderPaymentHistory(); // Update payment history display for selected debtor
+
+                // Provide feedback to user
+                if (debtor.currentAmount === 0) {
+                    alert(`✅ ${debtor.name} دفع المبلغ بالكامل! المبلغ المتبقي الآن هو ${debtor.currentAmount.toFixed(2)}.`);
+                    resetSelectedDebtorState(); // Deselect debtor if balance becomes zero
+                } else {
+                    alert(`تم تسجيل دفعة بقيمة ${paymentAmount.toFixed(2)} لـ ${debtor.name} بتاريخ ${paymentDateString}. المبلغ المتبقي: ${debtor.currentAmount.toFixed(2)}.`);
+                }
+                paymentAmountInput.value = ''; // Clear payment input field after successful transaction
+                actionArea.scrollIntoView({ behavior: 'smooth', block: 'center' }); // Keep action area in view for continuity
+                
+            } else {
+                console.error('خطأ: المدين المحدد غير موجود لدفع الدفعة في مصفوفة البيانات:', selectedDebtorId);
+                alert('حدث خطأ أثناء تحديد الشخص للدفع. يرجى إعادة تحديده.');
+                resetSelectedDebtorState();
+                setFormToAddMode();
+                renderDebtors();
+            }
+        });
+
+        // Event listener for the "Edit Debtor" button
+        editDebtorButton.addEventListener('click', () => {
+            if (selectedDebtorId === null) {
+                alert('يرجى تحديد شخص لتعديل بياناته.');
+                return;
+            }
+
+            const debtorToEdit = debtors.find(d => d.id === selectedDebtorId);
+            if (debtorToEdit) {
+                setFormToEditMode(debtorToEdit); // Populate form for editing
+                actionArea.style.display = 'none'; // Hide action area while editing main details
+            } else {
+                console.error('خطأ: المدين المراد تعديله غير موجود بالرقم التعريفي:', selectedDebtorId);
+                alert('حدث خطأ أثناء تحديد الشخص للتعديل. يرجى إعادة تحديده.');
+                resetSelectedDebtorState();
+                setFormToAddMode();
+                renderDebtors();
+            }
+        });
+
+        // Event listener for the "Delete Debtor" button
+        deleteDebtorButton.addEventListener('click', () => {
+            if (selectedDebtorId === null) {
+                alert('يرجى تحديد شخص للحذف.');
+                return;
+            }
+
+            const debtorToDelete = debtors.find(d => d.id === selectedDebtorId);
+            if (!debtorToDelete) {
+                console.error('خطأ: المدين المراد حذفه غير موجود بالرقم التعريفي:', selectedDebtorId);
+                alert('حدث خطأ أثناء تحديد الشخص للحذف. يرجى إعادة تحديده.');
+                resetSelectedDebtorState(); 
+                renderDebtors();
+                return;
+            }
+
+            // Confirm deletion with the user for safety
+            const confirmDeletion = confirm(`هل أنت متأكد من رغبتك في حذف "${debtorToDelete.name}" وجميع بياناته (بما في ذلك المبلغ المتبقي ${debtorToDelete.currentAmount.toFixed(2)} وسجل الدفعات)؟\n\nلا يمكن التراجع عن هذا الإجراء.`);
+            
+            if (confirmDeletion) {
+                const initialLength = debtors.length;
+                debtors = debtors.filter(d => d.id !== selectedDebtorId); // Remove debtor from array based on ID
+                
+                if (debtors.length < initialLength) { // Check if deletion was successful by comparing array length
+                    saveDebtors(); // Save updated (deleted) data
+                    alert(`تم حذف "${debtorToDelete.name}" بنجاح.`);
+                    resetSelectedDebtorState(); // Clear selected debtor and reset UI state
+                    calculateMonthlyIncome(); // Recalculate monthly income as a debtor might have been deleted
+                    const filteredDebtors = filterDebtors(searchInput.value); 
+                    renderDebtors(filteredDebtors); // Re-render table after deletion
+                } else {
+                    alert(`خطأ: لم يتمكن من حذف "${debtorToDelete.name}". يرجى المحاولة مرة أخرى.`);
+                }
+            }
+        });
+
+        // Initial setup on page load: Called when the DOM is fully loaded.
+        document.addEventListener('DOMContentLoaded', () => {
+            debtors = loadDebtors(); // Load initial data from LocalStorage
+            const initialSearchTerm = searchInput ? searchInput.value : ''; 
+            const filteredDebtors = filterDebtors(initialSearchTerm); 
+            renderDebtors(filteredDebtors); // Render the initial debtors table
+            calculateMonthlyIncome(); // Calculate and display initial monthly income
+            
+            // Set default current date/time for payment input if not already set by browser/user
+            if (paymentDateInput) {
+                const now = new Date();
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const day = String(now.getDate()).padStart(2, '0');
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                const initialDateTimeLocal = `${year}-${month}-${day}T${hours}:${minutes}`;
+                if (!paymentDateInput.value) { // Only set if empty
+                    paymentDateInput.value = initialDateTimeLocal;
+                }
+            }
+            
+            setFormToAddMode(); // Ensure the form is in "add" mode initially
+            updateActionAreaVisibility(); // Adjust action area visibility initially
+        });
+
+        // Prevent form submission on Enter key in input fields unless it's the submit button itself.
+        // This improves user experience by allowing Enter to navigate between fields without submitting.
+        if (debtorForm) {
+            debtorForm.addEventListener('keypress', function(e) {
+                // If Enter key is pressed (e.key === 'Enter') AND the target element is an input field (e.target.tagName === 'INPUT') 
+                // AND it's NOT a submit button (e.target.type !== 'submit')
+                if (e.key === 'Enter' && e.target.tagName === 'INPUT' && e.target.type !== 'submit') {
+                    e.preventDefault(); // Prevent default form submission behavior
+                }
+            });
+        }
+    </script>
+</body>
+</html>
